@@ -1,50 +1,58 @@
 from django.test import TestCase
-from shop.models import Product, Purchase
+from shop.models import Product, Purchase, Customer
 from datetime import datetime
+
 
 class ProductTestCase(TestCase):
     def setUp(self):
-        # Создаем тестовые продукты с целым числом в поле 'price'
-        Product.objects.create(name="book", price=740)
-        Product.objects.create(name="pencil", price=50)
+        Product.objects.create(name="Стол", price=2000)
+        Product.objects.create(name="Стул", price=1000)
 
     def test_correctness_types(self):
-        # Проверка типов данных полей модели Product
-        self.assertIsInstance(Product.objects.get(name="book").name, str)
-        self.assertIsInstance(Product.objects.get(name="book").price, int)
-        self.assertIsInstance(Product.objects.get(name="pencil").name, str)
-        self.assertIsInstance(Product.objects.get(name="pencil").price, int)
+        self.assertIsInstance(Product.objects.get(name="Стол").name, str)
+        self.assertIsInstance(Product.objects.get(name="Стол").price, int)
+        self.assertIsInstance(Product.objects.get(name="Стул").name, str)
+        self.assertIsInstance(Product.objects.get(name="Стул").price, int)
 
     def test_correctness_data(self):
-        # Проверка корректности данных полей модели Product
-        self.assertEqual(Product.objects.get(name="book").price, 740)
-        self.assertEqual(Product.objects.get(name="pencil").price, 50)
+        self.assertTrue(Product.objects.get(name="Стол").price == 2000)
+        self.assertTrue(Product.objects.get(name="Стул").price == 1000)
+
+
+class CustomerTestCase(TestCase):
+    def setUp(self):
+        Customer.objects.create(name="Иван Иванов", email="ivan@example.com", total_purchases=11)
+
+    def test_correctness_types(self):
+        customer = Customer.objects.get(name="Иван Иванов")
+        self.assertIsInstance(customer.name, str)
+        self.assertIsInstance(customer.email, str)
+        self.assertIsInstance(customer.total_purchases, int)
+
+    def test_correctness_data(self):
+        customer = Customer.objects.get(name="Иван Иванов")
+        self.assertEqual(customer.email, "ivan@example.com")
+        self.assertEqual(customer.total_purchases, 11)
 
 
 class PurchaseTestCase(TestCase):
     def setUp(self):
-        # Создаем тестовый продукт и покупку с новыми полями customer_name и customer_email
-        self.product_book = Product.objects.create(name="book", price=740)
-        self.datetime = datetime.now()
-        Purchase.objects.create(
-            product=self.product_book,
-            customer_name="Ivanov",
-            customer_email="ivanov@example.com",
-            address="Svetlaya St."
+        self.product = Product.objects.create(name="Стол", price=2000)
+        self.customer = Customer.objects.create(
+            name="Ivanov",
+            email="ivanov@example.com",
+            total_purchases=11
         )
 
-    def test_correctness_types(self):
-        # Проверка типов данных полей модели Purchase
-        purchase = Purchase.objects.get(product=self.product_book)
-        self.assertIsInstance(purchase.customer_name, str)
-        self.assertIsInstance(purchase.customer_email, str)
-        self.assertIsInstance(purchase.address, str)
-        self.assertIsInstance(purchase.date, datetime)
+    def test_receipt_data(self):
+        """Проверка расчета скидки и итоговой цены."""
+        purchase = Purchase.objects.create(
+            product=self.product,
+            customer=self.customer,
+            address="Ленина 3"
+        )
+        purchase.apply_discount()  # Применяем скидку
+        discounted_price = self.product.price * (1 - purchase.discount / 100)
 
-    def test_correctness_data(self):
-        # Проверка корректности данных полей модели Purchase
-        purchase = Purchase.objects.get(product=self.product_book)
-        self.assertEqual(purchase.customer_name, "Ivanov")
-        self.assertEqual(purchase.customer_email, "ivanov@example.com")
-        self.assertEqual(purchase.address, "Svetlaya St.")
-        self.assertEqual(purchase.date.replace(microsecond=0), self.datetime.replace(microsecond=0))
+        # Проверяем, что скидка 15% применена и цена верная
+        self.assertEqual(discounted_price, 1700)  # Цена со скидкой 15%

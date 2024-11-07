@@ -43,6 +43,7 @@ class PurchaseCreate(CreateView):
         discount = 15 if customer.total_purchases > 10 else 0
         discounted_price = int(product.price * (1 - discount / 100))
 
+
         # Сохраняем покупку и получаем дату покупки
         purchase = form.save(commit=False)
         purchase.apply_discount()
