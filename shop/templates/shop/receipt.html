@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чек</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-md mx-auto bg-white p-6 mt-10 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-4">Чек</h2>
+        <p class="mb-2"><strong>Покупатель:</strong> {{ customer.name }}</p>
+        <p class="mb-2"><strong>Email:</strong> {{ customer.email }}</p>
+        <p class="mb-2"><strong>Количество покупок:</strong> {{ total_purchases }}</p>
+        <p class="mb-2"><strong>Товар:</strong> {{ product.name }}</p>
+        <p class="mb-2"><strong>Оригинальная цена:</strong> {{ original_price }} руб.</p>
+        <p class="mb-2"><strong>Скидка:</strong> {{ discount }}%</p>
+        <p class="text-xl font-bold"><strong>Итоговая цена со скидкой:</strong> {{ discounted_price }} руб.</p>
+        <p class="mt-4"><strong>Дата и время покупки:</strong> {{ purchase_date|date:"d-m-Y H:i" }}</p>
+        <p class="mt-4">Спасибо за покупку!</p>
+    </div>
+
+        <div class="text-center mt-6">
+            <a href="{% url 'index' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                Вернуться к покупкам
+            </a>
+        </div>
+    </div>
+</body>
+</html>

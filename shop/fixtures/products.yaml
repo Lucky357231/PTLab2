@@ -1,3 +1,18 @@
+# Customers
+- model: shop.customer
+  pk: 1
+  fields:
+    name: Иван Иванов
+    email: ivan@example.com
+    total_purchases: 11
+- model: shop.customer
+  pk: 2
+  fields:
+    name: Мария Петрова
+    email: maria@example.com
+    total_purchases: 3
+
+# Products
 - model: shop.product
   pk: 1
   fields:
@@ -13,3 +28,13 @@
   fields:
     name: Табурет
     price: 500
+- model: shop.product
+  pk: 4
+  fields:
+    name: Лампа
+    price: 1500
+- model: shop.product
+  pk: 5
+  fields:
+    name: Полка
+    price: 700
