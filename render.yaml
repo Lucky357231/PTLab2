@@ -4,7 +4,9 @@ services:
     name: PTLab2
     env: python
     buildCommand: |
-      pip install -r requirements.txt
+        pip install -r requirements.txt
+        mkdir -p /opt/render/project/src/staticfiles
+        python manage.py collectstatic --noinput
     startCommand: |
       gunicorn tplab2.wsgi:application --bind 0.0.0.0:$PORT
     autoDeploy: true
@@ -12,9 +14,9 @@ services:
       - key: SECRET_KEY
         value: "django-insecure-%hodks^u@arq^bv-tms#o!v$c*p6_5o%yvw!!u+n9ber@*g9*f"
       - key: DEBUG
-        value: "True"
+        value: "FALSE"
       - key: ALLOWED_HOSTS
-        value: "localhost,127.0.0.1,ptlab2-52fv.onrender.com"
+        value: "localhost,127.0.0.1, ptlab2-52fv.onrender.com"
       - key: DATABASE_URL
         value: "postgresql://django_db_ww9t_user:Z5aDr2GVbYFHnBE6ce3nmXqSEcLoYZi9@dpg-csog0cggph6c73br10a0-a/django_db_ww9t"
     migrations:
