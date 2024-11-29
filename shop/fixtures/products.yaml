@@ -11,6 +11,12 @@
     name: Мария Петрова
     email: maria@example.com
     total_purchases: 3
+- model: shop.customer
+  pk: 3
+  fields:
+    name: Павел Морозов
+    email: pavel@example.com
+    total_purchases: 3
 
 # Products
 - model: shop.product

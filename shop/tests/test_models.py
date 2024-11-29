@@ -1,58 +1,35 @@
 from django.test import TestCase
-from shop.models import Product, Purchase, Customer
-from datetime import datetime
+from shop.models import Product, Customer, Purchase
 
 
-class ProductTestCase(TestCase):
+class ModelsTestCase(TestCase):
     def setUp(self):
-        Product.objects.create(name="Стол", price=2000)
-        Product.objects.create(name="Стул", price=1000)
+        # Создаем данные для тестов
+        self.customer = Customer.objects.create(name="Иван Иванов", email="ivan@example.com")
+        self.product = Product.objects.create(name="Тестовый товар", price=100)
 
-    def test_correctness_types(self):
-        self.assertIsInstance(Product.objects.get(name="Стол").name, str)
-        self.assertIsInstance(Product.objects.get(name="Стол").price, int)
-        self.assertIsInstance(Product.objects.get(name="Стул").name, str)
-        self.assertIsInstance(Product.objects.get(name="Стул").price, int)
+    def test_customer_creation(self):
+        """Тест создания клиента."""
+        customer = Customer.objects.create(name="Мария Петрова", email="maria@example.com")
+        self.assertEqual(customer.name, "Мария Петрова")
+        self.assertEqual(customer.email, "maria@example.com")
+        self.assertEqual(customer.total_purchases, 0)
 
-    def test_correctness_data(self):
-        self.assertTrue(Product.objects.get(name="Стол").price == 2000)
-        self.assertTrue(Product.objects.get(name="Стул").price == 1000)
+    def test_product_creation(self):
+        """Тест создания продукта."""
+        product = Product.objects.create(name="Новый товар", price=200)
+        self.assertEqual(product.name, "Новый товар")
+        self.assertEqual(product.price, 200)
 
-
-class CustomerTestCase(TestCase):
-    def setUp(self):
-        Customer.objects.create(name="Иван Иванов", email="ivan@example.com", total_purchases=11)
-
-    def test_correctness_types(self):
-        customer = Customer.objects.get(name="Иван Иванов")
-        self.assertIsInstance(customer.name, str)
-        self.assertIsInstance(customer.email, str)
-        self.assertIsInstance(customer.total_purchases, int)
-
-    def test_correctness_data(self):
-        customer = Customer.objects.get(name="Иван Иванов")
-        self.assertEqual(customer.email, "ivan@example.com")
-        self.assertEqual(customer.total_purchases, 11)
-
-
-class PurchaseTestCase(TestCase):
-    def setUp(self):
-        self.product = Product.objects.create(name="Стол", price=2000)
-        self.customer = Customer.objects.create(
-            name="Ivanov",
-            email="ivanov@example.com",
-            total_purchases=11
-        )
-
-    def test_receipt_data(self):
-        """Проверка расчета скидки и итоговой цены."""
+    def test_purchase_creation(self):
+        """Тест создания покупки."""
         purchase = Purchase.objects.create(
             product=self.product,
             customer=self.customer,
-            address="Ленина 3"
+            address="Ленина 10",
         )
-        purchase.apply_discount()  # Применяем скидку
-        discounted_price = self.product.price * (1 - purchase.discount / 100)
-
-        # Проверяем, что скидка 15% применена и цена верная
-        self.assertEqual(discounted_price, 1700)  # Цена со скидкой 15%
+        self.assertEqual(purchase.product, self.product)
+        self.assertEqual(purchase.customer, self.customer)
+        self.assertEqual(purchase.address, "Ленина 10")
+        self.assertEqual(purchase.discount, 0)
+        self.assertTrue(purchase.date)

@@ -18,20 +18,3 @@ class Purchase(models.Model):
     address = models.CharField(max_length=200)
     date = models.DateTimeField(auto_now_add=True)
     discount = models.PositiveIntegerField(default=0)
-
-    def apply_discount(self):
-        """Расчет скидки на основе количества покупок клиента."""
-        if self.customer.total_purchases > 10:
-            self.discount = 15
-        elif self.customer.total_purchases >= 5:
-            self.discount = 10
-        else:
-            self.discount = 5
-        self.save()
-
-    def discounted_price(self):
-        """Возвращает цену товара после применения скидки."""
-        return int(self.product.price * (1 - self.discount / 100))
-
-    def __str__(self):
-        return f"{self.customer.name} - {self.product.name} ({self.discount}% скидка)"
